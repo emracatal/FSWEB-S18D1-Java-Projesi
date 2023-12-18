@@ -29,4 +29,16 @@ public class BurgerController {
     public List<Burger> findAll() {
         return burgerDao.findAll();
     }
+
+    @GetMapping("/{id}")
+    public Burger findById(@PathVariable Long id) {
+        Optional<Burger> burger=burgerDao.findById(id);
+        //if(burger.isPresent()){ //globalexceptions sonrası bunu yazıcaz
+            return burger.get();
+    }
+
+    @DeleteMapping("/{id}")
+    public Burger remove(@PathVariable Long id) {
+        return burgerDao.remove(id);
+    }
 }

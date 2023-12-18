@@ -2,6 +2,7 @@ package com.wit.postgresql.dao;
 
 import com.wit.postgresql.entity.BreadType;
 import com.wit.postgresql.entity.Burger;
+import jakarta.persistence.Embeddable;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Transient;
 import jakarta.persistence.TypedQuery;
@@ -30,7 +31,7 @@ public class BurgerDaoImpl implements BurgerDao{
 
     @Override
     public Optional<Burger> findById(Long id) {
-        return Optional.empty();
+        return Optional.ofNullable(entityManager.find(Burger.class,id));
     }
 
     @Override
@@ -59,8 +60,12 @@ public class BurgerDaoImpl implements BurgerDao{
         return null;
     }
 
+    @Transactional
     @Override
     public Burger remove(Long id) {
-        return null;
+        Optional<Burger> optionalBurger=findById(id);
+        //if(optionalBurger.isPresent()){} TODO exceptions sonrası
+        entityManager.remove(optionalBurger.get());
+        return optionalBurger.get();
     }
 }

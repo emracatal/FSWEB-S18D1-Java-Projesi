@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class BurgerDaoImpl implements BurgerDao{
+public class BurgerDaoImpl implements BurgerDao {
     private EntityManager entityManager;
 
     @Autowired
@@ -31,41 +31,51 @@ public class BurgerDaoImpl implements BurgerDao{
 
     @Override
     public Optional<Burger> findById(Long id) {
-        return Optional.ofNullable(entityManager.find(Burger.class,id));
+        return Optional.ofNullable(entityManager.find(Burger.class, id));
     }
 
     @Override
     public List<Burger> findAll() {
-        TypedQuery<Burger> query=entityManager.createQuery("SELECT b FROM Burger b",Burger.class);
+        TypedQuery<Burger> query = entityManager.createQuery("SELECT b FROM Burger b", Burger.class);
         return query.getResultList();
     }
 
     @Override
     public List<Burger> findByPrice(Double price) {
-        return null;
+        TypedQuery<Burger> query = entityManager.createQuery("SELECT b FROM Burger b WHERE b.price >= :price ORDER BY b.price desc", Burger.class);
+        query.setParameter("price", price);
+        return query.getResultList();
     }
+
 
     @Override
     public List<Burger> findByBreadType(BreadType breadType) {
-        return null;
+        TypedQuery<Burger> query=entityManager.createQuery("SELECT b FROM Burger b WHERE b.breadType = :breadType ORDER BY b.name asc",Burger.class);
+        query.setParameter("breadType",breadType);
+        return query.getResultList();
     }
 
     @Override
     public List<Burger> findByContent(String content) {
-        return null;
+        TypedQuery<Burger> query = entityManager.createQuery("SELECT b FROM Burger b WHERE b.contents like CONCAT ('%',:content,'%') ORDER BY name", Burger.class);
+        query.setParameter("content",content);
+        return query.getResultList();
     }
 
+    @Transactional
     @Override
     public Burger update(Burger burger) {
-        return null;
+        return entityManager.merge(burger);
     }
 
     @Transactional
     @Override
     public Burger remove(Long id) {
-        Optional<Burger> optionalBurger=findById(id);
+        Optional<Burger> optionalBurger = findById(id);
         //if(optionalBurger.isPresent()){} TODO exceptions sonrası
         entityManager.remove(optionalBurger.get());
         return optionalBurger.get();
     }
+
+
 }

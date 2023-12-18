@@ -1,8 +1,10 @@
 package com.wit.postgresql.controller;
 
 import com.wit.postgresql.dao.BurgerDao;
+import com.wit.postgresql.dto.BurgerResponse;
 import com.wit.postgresql.entity.BreadType;
 import com.wit.postgresql.entity.Burger;
+import com.wit.postgresql.util.BurgerResponseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,8 +29,9 @@ public class BurgerController {
     }
 
     @GetMapping("/")
-    public List<Burger> findAll() {
-        return burgerDao.findAll();
+    public List<BurgerResponse> findAll() {
+        List<Burger> burgers = burgerDao.findAll();
+        return BurgerResponseEntity.burgerToBurgerResponse(burgers);
     }
 
     @GetMapping("/{id}")
@@ -44,13 +47,15 @@ public class BurgerController {
     }
 
     @PutMapping("/")
-    public Burger update(@RequestBody Burger burger) {
-        return burgerDao.update(burger);
+    public BurgerResponse update(@RequestBody Burger burger) {
+        Burger updatedBurger= burgerDao.update(burger);
+        return new BurgerResponse(updatedBurger.getName(),updatedBurger.getPrice());
     }
 
     @GetMapping("/price/{price}")
-    public List<Burger> findByPrice(@PathVariable Double price) {
-        return burgerDao.findByPrice(price);
+    public List<BurgerResponse> findByPrice(@PathVariable Double price) {
+        List<Burger> burgers = burgerDao.findByPrice(price);
+        return BurgerResponseEntity.burgerToBurgerResponse(burgers);
     }
 
     @GetMapping("/content/{content}")
